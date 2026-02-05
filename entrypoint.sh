@@ -2,14 +2,7 @@
 
 set -e
 
-echo "Waiting for database to be ready..."
-# Wait for database to be ready (healthcheck should handle this, but add extra wait)
-until python3 -c "import psycopg2; psycopg2.connect('postgres://postgres:postgres@db:5432/horilla')" 2>/dev/null; do
-  echo "Database is unavailable - sleeping"
-  sleep 1
-done
-
-echo "Database is ready. Running migrations..."
+echo "Running migrations..."
 python3 manage.py makemigrations --noinput
 python3 manage.py migrate --noinput
 
