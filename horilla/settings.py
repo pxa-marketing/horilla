@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "simple_history",
     "django_filters",
+    "storages",
     "base",
     "employee",
     "recruitment",
@@ -168,8 +169,26 @@ STATICFILES_DIRS = [
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+# Hetzner S3 Configuration
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", default="fsn1")
+AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default="")
+AWS_S3_ADDRESSING_STYLE = "virtual"
+DEFAULT_FILE_STORAGE = "horilla.storage_backends.PrivateMediaStorage"
+
+# Media files configuration for Hetzner S3
+if AWS_STORAGE_BUCKET_NAME and AWS_S3_ENDPOINT_URL:
+    # Use Hetzner S3 for media storage
+    # Hetzner S3 URL format: https://<bucket-name>.<endpoint>/media/
+    endpoint_without_protocol = AWS_S3_ENDPOINT_URL.replace("https://", "").replace("http://", "")
+    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{endpoint_without_protocol}/media/"
+    MEDIA_ROOT = f"https://{AWS_STORAGE_BUCKET_NAME}.{endpoint_without_protocol}/media/"
+else:
+    # Fallback to local media storage
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

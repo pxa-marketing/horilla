@@ -90,4 +90,5 @@ psycopg2-binary
 whitenoise
 django-storages
 boto3
+botocore
 google-cloud-storage==3.0.0
