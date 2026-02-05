@@ -113,9 +113,10 @@ if settings.env("AWS_ACCESS_KEY_ID", default=None):
     AWS_ACCESS_KEY_ID = settings.env("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = settings.env("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = settings.env("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = settings.env("AWS_S3_REGION_NAME")
-    DEFAULT_FILE_STORAGE = settings.env("DEFAULT_FILE_STORAGE")
-    AWS_S3_ADDRESSING_STYLE = settings.env("AWS_S3_ADDRESSING_STYLE")
+    AWS_S3_REGION_NAME = settings.env("AWS_S3_REGION_NAME", default="nbg1")
+    DEFAULT_FILE_STORAGE = settings.env("DEFAULT_FILE_STORAGE", default="horilla.storage_backends.PrivateMediaStorage")
+    AWS_S3_ADDRESSING_STYLE = settings.env("AWS_S3_ADDRESSING_STYLE", default="virtual")
+    AWS_S3_ENDPOINT_URL = settings.env("AWS_S3_ENDPOINT_URL", default="")
 
     settings.AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
     settings.AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
@@ -123,11 +124,19 @@ if settings.env("AWS_ACCESS_KEY_ID", default=None):
     settings.AWS_S3_REGION_NAME = AWS_S3_REGION_NAME
     settings.DEFAULT_FILE_STORAGE = DEFAULT_FILE_STORAGE
     settings.AWS_S3_ADDRESSING_STYLE = AWS_S3_ADDRESSING_STYLE
+    if AWS_S3_ENDPOINT_URL:
+        settings.AWS_S3_ENDPOINT_URL = AWS_S3_ENDPOINT_URL
 
 
 if settings.env("AWS_ACCESS_KEY_ID", default=None) and "storages" in INSTALLED_APPS:
-    settings.MEDIA_URL = f"{settings.env('MEDIA_URL')}/{settings.env('NAMESPACE')}/"
-    settings.MEDIA_ROOT = f"{settings.env('MEDIA_ROOT')}/{settings.env('NAMESPACE')}/"
+    # Append NAMESPACE to MEDIA_URL and MEDIA_ROOT if NAMESPACE is set
+    # Use the values already configured in settings.py
+    namespace = settings.env("NAMESPACE", default="")
+    if namespace:
+        if hasattr(settings, 'MEDIA_URL') and settings.MEDIA_URL:
+            settings.MEDIA_URL = f"{settings.MEDIA_URL.rstrip('/')}/{namespace}/"
+        if hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
+            settings.MEDIA_ROOT = f"{settings.MEDIA_ROOT.rstrip('/')}/{namespace}/"
 
 
 # Default LDAP settings
