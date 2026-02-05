@@ -1,21 +1,4 @@
 services:
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8000:8000
-    restart: unless-stopped
-    environment:
-      DATABASE_URL: "postgres://postgres:postgres@db:5432/horilla"
-    command: sh ./entrypoint.sh
-    volumes:
-      - ./horilla:/app/horilla
-      - ./media:/app/media
-    depends_on:
-      db:
-        condition: service_healthy
-
   db:
     image: postgres:16-bullseye
     environment:

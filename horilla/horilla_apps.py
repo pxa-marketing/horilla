@@ -45,17 +45,10 @@ if SETTINGS_EMAIL_BACKEND:
 
 
 SIDEBARS = [
-    "recruitment",
-    "onboarding",
     "employee",
-    "attendance",
     "leave",
     "payroll",
     "pms",
-    "offboarding",
-    "asset",
-    "helpdesk",
-    "project",
 ]
 
 WHITE_LABELLING = False
